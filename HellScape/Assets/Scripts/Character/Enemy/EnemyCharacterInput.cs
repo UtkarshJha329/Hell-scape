@@ -16,7 +16,7 @@ public class EnemyCharacterInput : MonoBehaviour
         s_CharacterProperties = GetComponent<CharacterProperties>();
         s_EnemyProperties = GetComponent<EnemyProperties>();
 
-        GeneratePathToFollow();
+        GeneratePathToFollow(EnemyType.WideAgent);
     }
 
     // Update is called once per frame
@@ -44,12 +44,13 @@ public class EnemyCharacterInput : MonoBehaviour
         }
     }
 
-    public void GeneratePathToFollow()
+    public void GeneratePathToFollow(EnemyType enemyType)
     {
         Vector3 startCalculatingPathFrom = transform.position;
         for (int i = 0; i < s_EnemyProperties.patrolPoints.Count; i++)
         {
-            NavMesh.CalculatePath(startCalculatingPathFrom, s_EnemyProperties.patrolPoints[i].position, NavMesh.AllAreas, s_EnemyProperties.navMeshPath);
+            //NavMesh.CalculatePath(startCalculatingPathFrom, s_EnemyProperties.patrolPoints[i].position, NavMesh.AllAreas, s_EnemyProperties.navMeshPath);
+            NavMesh.CalculatePath(startCalculatingPathFrom, s_EnemyProperties.patrolPoints[i].position, EnemyProperties.enemyTypeQueryFilter[enemyType], s_EnemyProperties.navMeshPath);
 
             for (int j = 0; j < s_EnemyProperties.navMeshPath.corners.Length; j++)
             {
@@ -99,4 +100,15 @@ public class EnemyCharacterInput : MonoBehaviour
         }
     }
 
+    public void GeneratePathToPlayer(EnemyType enemyType)
+    {
+        Vector3 startCalculatingPathFrom = transform.position;
+        //NavMesh.CalculatePath(startCalculatingPathFrom, EnemyProperties.playerTransform.position, NavMesh.AllAreas, s_EnemyProperties.navMeshPath);
+        NavMesh.CalculatePath(startCalculatingPathFrom, EnemyProperties.playerTransform.position, EnemyProperties.enemyTypeQueryFilter[enemyType], s_EnemyProperties.navMeshPath);
+
+        for (int j = 0; j < s_EnemyProperties.navMeshPath.corners.Length; j++)
+        {
+            s_EnemyProperties.pathPoints.Add(s_EnemyProperties.navMeshPath.corners[j]);
+        }
+    }
 }

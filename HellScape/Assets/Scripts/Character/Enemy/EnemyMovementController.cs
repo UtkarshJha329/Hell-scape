@@ -4,8 +4,7 @@ using UnityEngine;
 public class EnemyMovementController : MonoBehaviour
 {
     [Header("References")]
-    public Transform cameraHolder;
-    public Transform lookTarget;
+    public Transform headHolder;
 
     //================ Private Variables =======================
 
@@ -19,15 +18,15 @@ public class EnemyMovementController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         s_CharacterProperties = GetComponent<CharacterProperties>();
         s_EnemyProperties = GetComponent<EnemyProperties>();
-
-        if (lookTarget == null)
-        {
-            Debug.LogError("Reference to Look Target variable in Character Movement Controller component attached to " + gameObject.name + " is missing!");
-        }
     }
 
     private void Start()
     {
+        if (EnemyProperties.playerTransform == null)
+        {
+            Debug.LogError("Reference to player transform variable in Enemy Movement Controller component attached to " + gameObject.name + " is missing!");
+        }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -40,8 +39,8 @@ public class EnemyMovementController : MonoBehaviour
 
     private void PerformHeadMovement()
     {
-        Vector3 lookDirection = lookTarget.position - transform.position;
-        cameraHolder.rotation = Quaternion.Lerp(cameraHolder.rotation, Quaternion.LookRotation(lookDirection), s_EnemyProperties.headRotateSpeed * Time.deltaTime);
+        Vector3 lookDirection = EnemyProperties.playerTransform.position - transform.position;
+        headHolder.rotation = Quaternion.Lerp(headHolder.rotation, Quaternion.LookRotation(lookDirection), s_EnemyProperties.headRotateSpeed * Time.deltaTime);
     }
 
     private void PerformCharacterMovement()
