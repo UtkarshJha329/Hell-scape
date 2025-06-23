@@ -150,6 +150,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1124515737}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &87937349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 87937350}
+  - component: {fileID: 87937351}
+  m_Layer: 0
+  m_Name: NavMeshManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &87937350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87937349}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1547574893}
+  - {fileID: 355611284}
+  m_Father: {fileID: 786756456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &87937351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87937349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e06c1548503f6144a08806fe354ea5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  surfaceAndCorrespondingEnemyTypes:
+  - navMeshSurface: {fileID: 1547574894}
+    enemyType: 0
+  - navMeshSurface: {fileID: 355611285}
+    enemyType: 1
 --- !u!1 &131965938
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,9 +232,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1547574893}
-  - {fileID: 355611284}
+  m_Children: []
   m_Father: {fileID: 1551829311}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &131965940
@@ -348,12 +397,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355611283}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 131965939}
+  m_Father: {fileID: 87937350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &355611285
 MonoBehaviour:
@@ -668,6 +717,7 @@ Transform:
   - {fileID: 953580830}
   - {fileID: 1551829311}
   - {fileID: 1124515737}
+  - {fileID: 87937350}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &822032641
@@ -1005,11 +1055,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   headRotateSpeed: 10
   characterNoticeDistance: 20
-  surfaceAndCorrespondingEnemyTypes:
-  - navMeshSurface: {fileID: 1547574894}
-    enemyType: 0
-  - navMeshSurface: {fileID: 355611285}
-    enemyType: 1
+  updateInSeconds: 1
   distanceToStopFromPathPoint: 1.5
   loopPathPoints: 1
   patrolPoints:
@@ -1023,11 +1069,19 @@ MonoBehaviour:
   - {fileID: 1197203934}
   - {fileID: 1030850041}
   - {fileID: 2089714245}
-  pathPoints: []
   pathPointsToPlayer: []
+  currentPathIndex: 0
   currentPathPointIndex: 0
+  enemyStateParameters:
+  - enemyGenericState: 0
+    timeToStayInState: 5
+    stateTimeType: 0
+  - enemyGenericState: 1
+    timeToStayInState: 0
+    stateTimeType: 1
   pathingState: 0
   playerRelationState: 0
+  genericState: 0
 --- !u!114 &953580835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1356,12 +1410,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1547574892}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 131965939}
+  m_Father: {fileID: 87937350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1547574894
 MonoBehaviour:

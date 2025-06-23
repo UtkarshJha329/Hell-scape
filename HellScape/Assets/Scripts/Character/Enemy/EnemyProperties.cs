@@ -8,7 +8,8 @@ using UnityEngine.AI;
 public enum EnemyPathingStates
 {
     FollowingPath,
-    ReachedEndOfPath
+    ReachedEndOfPath,
+    ReachedEndOfPatrolRoute
 }
 
 public enum EnemyPlayerRelationStates
@@ -16,6 +17,13 @@ public enum EnemyPlayerRelationStates
     ManipulatingPlayer,
     ChasingPlayer,
     AttackingPlayer
+}
+
+public enum EnemyGenericStates
+{
+    Idling,
+    Patroling,
+    InteractingWithPlayer
 }
 
 public enum EnemyType
@@ -37,20 +45,24 @@ public struct NavMeshSurfaceEnemyType
     public EnemyType enemyType;
 }
 
+[System.Serializable]
+public struct EnemyStateParameters
+{
+    public EnemyGenericStates enemyGenericState;
+    public float timeToStayInState;
+}
+
 public class EnemyProperties : MonoBehaviour
 {
     [Header("Player Data Visible To Enemy")]
-    public static Transform playerTransform;
+    public static Transform playerTransform = null;
 
     [Header("Enemy Character Properties")]
     public float headRotateSpeed = 10.0f;
     public float characterNoticeDistance = 20.0f;
 
-    // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV REFACTOR THIS PROPERLY SO THAT ONLY ONE PLACE HAS ACCESS TO THIS IN THE INSPECTOR ON A COMPLETELY DIFFERENT MANAGER OBJECT!!!!!!!
-    [Header("Navmesh Properties")]
-    public List<NavMeshSurfaceEnemyType> surfaceAndCorrespondingEnemyTypes = new List<NavMeshSurfaceEnemyType>();
-    public static Dictionary<EnemyType, NavMeshQueryFilter> enemyTypeQueryFilter = new Dictionary<EnemyType, NavMeshQueryFilter>();
-    //public NavMeshSurface[] navMeshSurfaces;
+    [Header("Path To Player Properties")]
+    public float updateInSeconds = 1.0f;
 
     [Header("Path Following Properties")]
     public float distanceToStopFromPathPoint = 0.5f;
@@ -58,27 +70,36 @@ public class EnemyProperties : MonoBehaviour
     
     [Header("Path Points")]
     public List<Transform> patrolPoints = new List<Transform>();
-    public List<Vector3> pathPoints = new List<Vector3>();
+    public List<List<Vector3>> pathPoints = new List<List<Vector3>>();
     public List<Vector3> pathPointsToPlayer = new List<Vector3>();
+
+    // Do we really need two of them?
     public NavMeshPath navMeshPath;
     public NavMeshPath navMeshPathToPlayer;
 
+    public int currentPathIndex = 0;
     public int currentPathPointIndex = 0;
+
+    // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV ADD IT INTO ITS OWN FILE, using scriptable objects or whatever.
+    [Header("Generic States Behaviour")]
+    public List<EnemyStateParameters> enemyStateParameters = new List<EnemyStateParameters>();
+    public static Dictionary<EnemyGenericStates, EnemyStateParameters> enemyGenericStateParameters = new Dictionary<EnemyGenericStates, EnemyStateParameters>();
+    // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
     public EnemyPathingStates pathingState;
     public EnemyPlayerRelationStates playerRelationState;
+    public EnemyGenericStates genericState;
 
     private void Awake()
     {
-        playerTransform = GameObject.FindGameObjectsWithTag("Player")[0].transform;
-
-        for (int i = 0; i < surfaceAndCorrespondingEnemyTypes.Count; i++)
+        if(playerTransform == null)
         {
-            NavMeshQueryFilter enemyAgentFilter = new NavMeshQueryFilter();
-            enemyAgentFilter.agentTypeID = surfaceAndCorrespondingEnemyTypes[i].navMeshSurface.agentTypeID;
-            enemyAgentFilter.areaMask = NavMesh.AllAreas;
+            playerTransform = GameObject.FindGameObjectsWithTag("Player")[0].transform;
+        }
 
-            enemyTypeQueryFilter.Add(surfaceAndCorrespondingEnemyTypes[i].enemyType, enemyAgentFilter);
+        for (int i = 0; i < enemyStateParameters.Count; i++)
+        {
+            enemyGenericStateParameters.Add(enemyStateParameters[i].enemyGenericState, enemyStateParameters[i]);
         }
     }
 
