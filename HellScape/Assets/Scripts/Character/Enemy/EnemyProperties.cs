@@ -43,7 +43,8 @@ public enum EnemyActionsWhenInterractingWithPlayer
 {
     Attack,
     PlayDead,
-    CastDebuff
+    None,
+    CastDebuff,
 }
 
 [System.Serializable]
@@ -64,19 +65,20 @@ public class EnemyProperties : MonoBehaviour
 {
     [Header("Player Data Visible To Enemy")]
     public static Transform playerTransform = null;
+    public LayerMask playerLayerMask;
 
     [Header("Enemy Character Properties")]
     public EnemyType enemyType;
     public float headRotateSpeed = 10.0f;
-    public float characterNoticeDistance = 20.0f;
-    public float characterAttackDistance = 1.5f;
+    public float noticePlayerDistance = 20.0f;
+    public float characterAttackFromDistance = 1.5f;
 
     [Header("Path To Player Properties")]
     public float updateInSeconds = 1.0f;
 
     [Header("Path Following Properties")]
     public float distanceToStopFromPathPoint = 1.5f;
-    public float distanceToStopFromTempPathPointToTarget = 1.0f;
+    public float distanceToStopFromTempPathPointToTarget = 2.0f;
     public bool loopPathPoints = true;
     
     [Header("Path Points")]
@@ -97,11 +99,24 @@ public class EnemyProperties : MonoBehaviour
     [Header("Generic States Behaviour")]
     public List<EnemyStateParameters> enemyStateParameters = new List<EnemyStateParameters>();
     public static Dictionary<EnemyGenericStates, EnemyStateParameters> enemyGenericStateParameters = new Dictionary<EnemyGenericStates, EnemyStateParameters>();
+
+    [Header("Ghoul Interaction Properties")]
+    public int damageAmountAtOnceBeforePlayDead = 5;
+    public float playDeadForTime = 15.0f;
+    public bool startedPlayingDead = false;
     // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
+    [Header("Enemy Attack Specific Variables")]
+    public float attackSphereColliderRadius = 5.0f;
+    public float enemyAttackTravelDistance = 2.5f;
+
+
+    [Header("Enemy States")]
     public EnemyPathingStates pathingState;
     public EnemyPlayerRelationStates playerRelationState;
     public EnemyGenericStates genericState;
+
+    public EnemyActionsWhenInterractingWithPlayer enemyActionWhenInterractingWithPlayer;
 
     private void Awake()
     {

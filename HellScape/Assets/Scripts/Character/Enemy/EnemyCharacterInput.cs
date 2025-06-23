@@ -25,7 +25,7 @@ public class EnemyCharacterInput : MonoBehaviour
         s_CharacterProperties = GetComponent<CharacterProperties>();
         s_EnemyProperties = GetComponent<EnemyProperties>();
 
-        GeneratePathToFollow(EnemyType.WideAgent);
+        GeneratePathToFollow(s_EnemyProperties.enemyType);
 
         s_EnemyProperties.pathingState = EnemyPathingStates.FollowingPath;
         s_EnemyProperties.genericState = EnemyGenericStates.Patroling;
@@ -34,11 +34,14 @@ public class EnemyCharacterInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        EnemyInteractingWithPlayerStateManager();
-        if(s_EnemyProperties.genericState != EnemyGenericStates.InteractingWithPlayer
-            && s_EnemyProperties.genericState != EnemyGenericStates.ReturningToPatrol)
+        if(s_EnemyProperties.enemyActionWhenInterractingWithPlayer != EnemyActionsWhenInterractingWithPlayer.PlayDead)
         {
-            EnemyPatrolAndIdleStateManager();
+            EnemyInteractingWithPlayerStateManager();
+            if (s_EnemyProperties.genericState != EnemyGenericStates.InteractingWithPlayer
+                && s_EnemyProperties.genericState != EnemyGenericStates.ReturningToPatrol)
+            {
+                EnemyPatrolAndIdleStateManager();
+            }
         }
     }
 
@@ -54,35 +57,41 @@ public class EnemyCharacterInput : MonoBehaviour
     public void EnemyInteractingWithPlayerStateManager()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, EnemyProperties.playerTransform.position);
-        if (distanceToPlayer <= s_EnemyProperties.characterNoticeDistance)
+        if (distanceToPlayer <= s_EnemyProperties.noticePlayerDistance)
         {
             s_EnemyProperties.genericState = EnemyGenericStates.InteractingWithPlayer;
             generatedPathToReturnToPatrol = false;
 
             if(s_EnemyProperties.enemyType == EnemyType.Ghoul)
             {
-                if(distanceToPlayer <= s_EnemyProperties.characterAttackDistance && s_EnemyProperties.pathingState == EnemyPathingStates.ReachedEndOfPath)
-                {
-                    Debug.Log("Attacking player.");
-                }
-                else
-                {
-                    if(generatePathToPlayerAtTime <= Time.time)
-                    {
-                        GeneratePathToPlayer(s_EnemyProperties.enemyType);
-                        generatePathToPlayerAtTime = Time.time + generatePathToPlayerEveryXSeconds;
-                    }
-
-                    if(s_EnemyProperties.tempPathPointsToCurrentTarget.Count > 0)
-                    {
-                        FollowCurrentPathPointsToTarget();
-                    }
-                }
+                MoveToPlayerAndPerformAction(distanceToPlayer, EnemyActionsWhenInterractingWithPlayer.Attack);
             }
         }
         else
         {
             CooldownFromInteractingWithPlayer();
+        }
+    }
+
+    public void MoveToPlayerAndPerformAction(float distanceToPlayer, EnemyActionsWhenInterractingWithPlayer _enemyActionsWhenInterractingWithPlayer)
+    {
+        if (distanceToPlayer <= s_EnemyProperties.characterAttackFromDistance && s_EnemyProperties.pathingState == EnemyPathingStates.ReachedEndOfPath)
+        {
+            //Debug.Log("Action on player := " + _enemyActionsWhenInterractingWithPlayer);
+            s_EnemyProperties.enemyActionWhenInterractingWithPlayer = _enemyActionsWhenInterractingWithPlayer;
+        }
+        else
+        {
+            if (generatePathToPlayerAtTime <= Time.time)
+            {
+                GeneratePathToPlayer(s_EnemyProperties.enemyType);
+                generatePathToPlayerAtTime = Time.time + generatePathToPlayerEveryXSeconds;
+            }
+
+            if (s_EnemyProperties.tempPathPointsToCurrentTarget.Count > 0)
+            {
+                FollowCurrentPathPointsToTarget();
+            }
         }
     }
 
@@ -163,11 +172,23 @@ public class EnemyCharacterInput : MonoBehaviour
         Vector3 currentPathPoint = Vector3.zero;
         GetCurrentClosestTempPathPointToTarget(ref currentPathPoint);
 
-        Vector3 moveDir = (currentPathPoint - transform.position).normalized;
-        s_CharacterProperties.horizontalPlaneInput = new Vector2(moveDir.x, moveDir.z);
+        float distance = Vector3.Distance(currentPathPoint, transform.position);
+        if(distance > s_EnemyProperties.distanceToStopFromTempPathPointToTarget)
+        {
+            Vector3 moveDir = (currentPathPoint - transform.position).normalized;
+            s_CharacterProperties.horizontalPlaneInput = new Vector2(moveDir.x, moveDir.z);
+        }
+        else
+        {
+            //Vector3 moveDir = (currentPathPoint - transform.position).normalized;
+            //s_CharacterProperties.horizontalPlaneInput = new Vector2(moveDir.x, moveDir.z);
+
+            s_CharacterProperties.horizontalPlaneInput = Vector2.zero;
+        }
 
         s_CharacterProperties.mouseDelta = Vector2.zero;
         currentDestination = currentPathPoint;
+
     }
 
     public void FollowCurrentPathPoints()
@@ -323,7 +344,7 @@ public class EnemyCharacterInput : MonoBehaviour
             s_EnemyProperties.tempPathPointsToCurrentTarget.Add(s_EnemyProperties.navMeshPathToTarget.corners[i]);
         }
 
-        Debug.Log("Generated path to player := " + s_EnemyProperties.tempPathPointsToCurrentTarget.Count);
+        //Debug.Log("Generated path to player := " + s_EnemyProperties.tempPathPointsToCurrentTarget.Count);
     }
 
     public void GeneratePathBackToCurrentPatrolPathPoint(EnemyType enemyType)

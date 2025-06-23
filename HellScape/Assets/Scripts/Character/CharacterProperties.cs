@@ -32,5 +32,6 @@ public class CharacterProperties : MonoBehaviour
 
     [Header("Health Stuff")]
     public LifeState lifeState;
+    public int health;
 
 }
