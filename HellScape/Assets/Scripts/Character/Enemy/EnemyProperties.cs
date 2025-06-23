@@ -23,7 +23,8 @@ public enum EnemyGenericStates
 {
     Idling,
     Patroling,
-    InteractingWithPlayer
+    InteractingWithPlayer,
+    ReturningToPatrol
 }
 
 public enum EnemyType
@@ -36,6 +37,13 @@ public enum EnemyType
     WingedWretch,
     GateGuardian,
     GorgonSerpent
+}
+
+public enum EnemyActionsWhenInterractingWithPlayer
+{
+    Attack,
+    PlayDead,
+    CastDebuff
 }
 
 [System.Serializable]
@@ -58,27 +66,32 @@ public class EnemyProperties : MonoBehaviour
     public static Transform playerTransform = null;
 
     [Header("Enemy Character Properties")]
+    public EnemyType enemyType;
     public float headRotateSpeed = 10.0f;
     public float characterNoticeDistance = 20.0f;
+    public float characterAttackDistance = 1.5f;
 
     [Header("Path To Player Properties")]
     public float updateInSeconds = 1.0f;
 
     [Header("Path Following Properties")]
-    public float distanceToStopFromPathPoint = 0.5f;
+    public float distanceToStopFromPathPoint = 1.5f;
+    public float distanceToStopFromTempPathPointToTarget = 1.0f;
     public bool loopPathPoints = true;
     
     [Header("Path Points")]
     public List<Transform> patrolPoints = new List<Transform>();
     public List<List<Vector3>> pathPoints = new List<List<Vector3>>();
-    public List<Vector3> pathPointsToPlayer = new List<Vector3>();
+    public List<Vector3> tempPathPointsToCurrentTarget = new List<Vector3>();
 
     // Do we really need two of them?
     public NavMeshPath navMeshPath;
-    public NavMeshPath navMeshPathToPlayer;
+    public NavMeshPath navMeshPathToTarget;
 
     public int currentPathIndex = 0;
     public int currentPathPointIndex = 0;
+
+    public int currentTempPathPointToTargetIndex = 0;
 
     // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV ADD IT INTO ITS OWN FILE, using scriptable objects or whatever.
     [Header("Generic States Behaviour")]
@@ -106,5 +119,6 @@ public class EnemyProperties : MonoBehaviour
     private void Start()
     {
         navMeshPath = new NavMeshPath();
+        navMeshPathToTarget = new NavMeshPath();
     }
 }

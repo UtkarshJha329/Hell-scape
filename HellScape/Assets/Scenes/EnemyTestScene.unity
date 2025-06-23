@@ -1053,10 +1053,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61fdb0a2f92718e4698ac43ed3ebb50e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   headRotateSpeed: 10
   characterNoticeDistance: 20
+  characterAttackDistance: 1.5
   updateInSeconds: 1
   distanceToStopFromPathPoint: 1.5
+  distanceToStopFromTempPathPointToTarget: 1.5
   loopPathPoints: 1
   patrolPoints:
   - {fileID: 959242118}
@@ -1069,16 +1072,15 @@ MonoBehaviour:
   - {fileID: 1197203934}
   - {fileID: 1030850041}
   - {fileID: 2089714245}
-  pathPointsToPlayer: []
+  tempPathPointsToCurrentTarget: []
   currentPathIndex: 0
   currentPathPointIndex: 0
+  currentTempPathPointToTargetIndex: 0
   enemyStateParameters:
   - enemyGenericState: 0
     timeToStayInState: 5
-    stateTimeType: 0
   - enemyGenericState: 1
     timeToStayInState: 0
-    stateTimeType: 1
   pathingState: 0
   playerRelationState: 0
   genericState: 0
@@ -1507,7 +1509,7 @@ Transform:
   m_GameObject: {fileID: 1581628123}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.13, y: 4.64, z: 9.31}
+  m_LocalPosition: {x: -95.1, y: 1, z: -2.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
