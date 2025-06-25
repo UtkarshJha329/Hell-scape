@@ -34,9 +34,4 @@ public class CharacterProperties : MonoBehaviour
     public LifeState lifeState;
     public int health;
 
-    public void TakeDamage(int damage, Vector3 damageFromPosition)
-    {
-        health -= damage;
-    }
-
 }

@@ -65,7 +65,6 @@ public class EnemyProperties : MonoBehaviour
 {
     [Header("Player Data Visible To Enemy")]
     public static Transform playerTransform = null;
-    public static CharacterProperties s_PlayerCharacterProperties;
     public LayerMask playerLayerMask;
 
     [Header("Enemy Character Properties")]
@@ -105,13 +104,11 @@ public class EnemyProperties : MonoBehaviour
     public int damageAmountAtOnceBeforePlayDead = 5;
     public float playDeadForTime = 15.0f;
     public bool startedPlayingDead = false;
+    // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
     [Header("Enemy Attack Specific Variables")]
     public float attackSphereColliderRadius = 5.0f;
     public float enemyAttackTravelDistance = 2.5f;
-    public int attackDamageAmount = 5;
-
-    // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 
     [Header("Enemy States")]
@@ -126,7 +123,6 @@ public class EnemyProperties : MonoBehaviour
         if(playerTransform == null)
         {
             playerTransform = GameObject.FindGameObjectsWithTag("Player")[0].transform;
-            s_PlayerCharacterProperties = playerTransform.GetComponent<CharacterProperties>();
         }
 
         for (int i = 0; i < enemyStateParameters.Count; i++)

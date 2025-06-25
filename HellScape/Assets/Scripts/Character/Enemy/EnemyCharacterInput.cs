@@ -180,6 +180,9 @@ public class EnemyCharacterInput : MonoBehaviour
         }
         else
         {
+            //Vector3 moveDir = (currentPathPoint - transform.position).normalized;
+            //s_CharacterProperties.horizontalPlaneInput = new Vector2(moveDir.x, moveDir.z);
+
             s_CharacterProperties.horizontalPlaneInput = Vector2.zero;
         }
 
