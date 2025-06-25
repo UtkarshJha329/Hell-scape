@@ -46,6 +46,7 @@ public class EnemyPlayerInterraction : MonoBehaviour
             if (hitInfo.collider.CompareTag("Player"))
             {
                 Debug.Log("Attack landed on player.");
+                EnemyProperties.s_PlayerCharacterProperties.TakeDamage(s_EnemyProperties.attackDamageAmount, transform.position);
             }
         }
     }
